@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List</title>
+</head>
+<body>
+    <ul class="context">
+        <li class="context-link">
+            <img src="../images/trash-blank-alt-svgrepo-com.svg" alt="" class="context-img">
+            <span class="context-label" id="del-prj">Delete Project</span>
+        </li>
+    </ul>
+    <header id="project-header"></header>
+    <div class="sidebar">
+        <div class="sidebar-header-container">
+        <div class="sidebar-header">Menu</div>
+        <button id="new-project">+</button>
+        </div>
+        <input type="search" placeholder="Search projects..." id="search">
+        <div class="projects-header">Projects</div>
+        <div class="projects-list">
+            <div class="project selected-project" id="default-project">
+                <div class="prj-img"><img class="prj-img" src="../images/todo-list-svgrepo-com.svg" alt=""></div>
+                <div class="prj-ttl">Today</div>
+            </div>
+        </div>
+    </div>
+        <div class="content">
+            <dialog id="add-project">
+                <h1 class="add-project-header">New Project</h1>
+                <form id="add-project-form">
+                    <div class="prompt">
+                        <label for="proj-title-inp">Title</label>
+                        <input type="text" name="proj-title-inp" id="proj-title-inp">
+                    </div>
+
+                    <div class="dialog-buttons">
+                        <button class="save-changes" id="add-proj-save">Save Changes</button>
+                        <button class="discard" id="project-discard">Discard</button>
+                    </div>
+                </form>
+            </dialog>
+            <dialog id="add-task">
+                <h1 class="add-task-header">Add a task</h1>
+                <form id="add-task-form">
+                    <div class="prompt">
+                        <label for="task-title-inp">Title</label>
+                        <input type="text" name="task-title-inp" id="task-title-inp">
+                    </div>
+
+                    <div class="prompt">
+                        <label for="task-desc-inp">Description</label>
+                        <textarea name="task-desc-inp" id="task-desc-inp"></textarea>
+                    </div>
+
+                    <div class="prompt">
+                        <label for="task-date-inp">Due</label>
+                        <input type="date" name="task-date-inp" id="task-date-inp">
+                    </div>
+
+                    <div class="prompt">
+                        <label for="task-priority-inp">Priority</label>
+                        <select name="task-priority-inp" id="task-priority-inp">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    
+                    <div class="dialog-buttons">
+                        <button class="save-changes" id="add-task-save">Save Changes</button>
+                        <button class="discard" id="task-discard">Discard</button>
+                    </div>
+                </form>
+            </dialog>
+            <button class="add-task"><div class="plus">+ </div> Add New Task</button>
+            <div class="tasks">
+            </div>
+        </div>
+        <div class="edit-task hidden">
+            <div class="edit-task-header">
+                <h2 class="edit-task-title">Task:</h2>
+                <button id="close-edit">X</button>
+            </div>
+            <form action="" id="edit-task-form">
+                <div class="prompt">
+                    <input type="text" name="task-name" id="edit-task-name" placeholder="Task name">
+                </div>
+
+                <div class="prompt">
+                    <textarea name="edit-task-desc" id="edit-task-desc"></textarea>
+                </div>
+
+                <div class="prompt">
+                    <label for="task-edit-date">Due Date</label>
+                    <input type="date" name="task-edit-date" id="task-edit-date">
+                </div>
+
+                <div class="prompt">
+                     <label for="edit-task-priority">Priority</label>
+                        <select name="edit-task-priority" id="edit-task-priority">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                </div>
+            </form>
+            <div class="edit-task-buttons">
+                <button class="discard edit-task-button" id="edit-delete-btn">Delete Task</button>
+                <button class="save-changes edit-task-button" id="edit-save-btn">Save Changes</button>
+            </div>
+        </div>
+</body>
+</html>

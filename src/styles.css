@@ -1,0 +1,356 @@
+* {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+button, input {
+    border-style: solid;
+}
+
+input {
+    border: solid 1px;
+}
+
+body {
+    margin: 15px;
+    margin-right: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.5fr;
+    grid-template-rows: 1fr 14fr;
+}
+
+header {
+    grid-column: 2 / 2;
+    grid-row: 1 / 1;
+    font-size: 3em;
+    font-weight: 700;
+    width: 50%;
+}
+
+
+.sidebar {
+    grid-row: 1 / -1;
+    grid-column: 1;
+    background-color: #f4f4f4;
+    margin-right: 20px;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.sidebar-header {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: #525252;
+}
+
+.sidebar-header-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.project {
+    display: grid;
+    grid-template-columns: 25px 5fr;
+    grid-template-rows: 20px;
+    gap: 10px;
+    font-size: 0.8em;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    min-height: 30px;
+    min-width: 100px;
+}
+
+.prj-img {
+    height: 20px;
+    width: 20px;
+    align-self: center;
+    justify-self: center;
+}
+
+.selected-project {
+    background-color: #e6e6e6;
+    border-radius: 5px;
+    font-weight: 700;
+}
+
+
+#new-project {
+    font-size: 1.2em;
+    font-weight: 700;
+    border-width: 0;
+    color: #525252;
+    background-color: #f4f4f4;
+}
+
+input[type=search] {
+    background-color: #f4f4f4;
+    border-color: #dedede;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 20px;
+    margin-bottom: 35px;
+    width: 19.4em;
+}
+
+.projects-header {
+    font-size: 0.75em;
+    font-weight: 700;
+    color: #565656;
+}
+
+
+.content {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex-wrap: wrap;
+    grid-row: 2 / -1;
+    grid-column: 2 / -1;
+}
+
+.main-content {
+    display: flex;
+    width: 100%;
+}
+
+/* edit task */
+.edit-task {
+    background-color: #f4f4f4;
+    grid-row: 1 / -1;
+    grid-column: 3 / 3;
+    padding: 30px;
+    padding-top: 15px;
+}
+
+.edit-task-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+#edit-task-desc {
+    resize: none;
+    min-height: 15rem;
+    width: 30rem;
+}
+
+#close-edit {
+    border: none;
+    background-color: #f4f4f4;
+}
+
+
+#add-task, #add-project {
+    background-color:#f4f4f4 ;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: none;
+    border-radius: 5px;
+}
+
+.add-project-header {
+    margin-bottom: 5px;
+}
+
+.prompt {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    margin-bottom: 20px;
+}
+
+.add-task {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 500px;
+    height: 50px;
+    color: #959595;
+    background-color: white;
+    border-width: 1px;
+    border-color: #e4e4e4;
+    border-radius: 5px;
+    transition: background-color 200ms;
+}
+
+.add-task:hover, .discard:hover {
+    background-color: rgb(221, 221, 221);
+    transition: background-color 200ms;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.save-changes {
+    background-color: rgb(255, 217, 50);
+    font-weight: 700;
+    border: none;
+    border-radius: 5px;
+    padding: 15px;
+    transition: background-color 200ms;
+}
+
+.save-changes:hover {
+    transition: background-color 200ms;
+    background-color: rgb(219, 187, 43);
+}
+
+.discard {
+    border-radius: 5px;
+    font-weight: 700;
+    border: 1px solid #dedede;
+    background-color: #f4f4f4;
+    padding: 15px;
+    padding-left: 35px;
+    padding-right: 35px;
+    transition: background-color 200ms;
+}
+
+.task {
+    display: flex;
+    justify-content: space-between;
+    width: 500px;
+    border-bottom: solid 1px #e4e4e4;
+    padding: 17px;
+    padding-right: 8px;
+    align-content: center;
+}
+
+.start {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.end {
+    justify-self: end;
+}
+
+.add-task, .task {
+    width: clamp(240px, 90%, 3000px);
+}
+
+.task {
+    display: grid;
+    grid-template-columns: 3fr 3fr 3fr 1fr;
+}
+
+.complete-task {
+    height: 16px;
+    width: 16px;
+    border: solid 1px #e4e4e4;
+    border-radius: 3px;
+    background-color: white;
+    padding: 0;
+}
+
+.complete-task.checked {
+    background-color: rgb(255, 217, 50);
+}
+
+.task-title {
+    justify-self: start;
+}
+
+
+.due-date-img {
+    height: 17px;
+    width: 17px
+}
+
+.priority, .due-date {
+    font-size: 0.8em;
+    align-self:center ;
+    display: flex;
+    gap: 5px;
+    color: #989898;
+}
+
+.priority-high, .priority-medium, .priority-low {
+    height: 16px;
+    width: 16px;
+    border-radius: 3px;
+}
+
+.priority-high {
+    background-color: rgb(252, 121, 121);
+}
+
+.priority-medium {
+    background-color: rgb(255, 206, 46);
+}
+
+.priority-low {
+    background-color: rgb(17, 182, 17);
+}
+
+.show-more {
+    border: none;
+    background-color: white;
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #989898;
+}
+
+.plus {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: rgb(103, 103, 103);
+    margin-bottom: 4px;
+    margin-left: 10px;
+    margin-right: 4px;
+}
+
+.completed {
+    color: #828282;
+    text-decoration: line-through;
+}
+
+.context {
+    width: 200px;
+    margin: 0;
+    padding-left: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    position: fixed;
+    font-size: 16px;
+    visibility: hidden;
+}
+
+.context-link {
+    list-style-type: none;
+    padding: 0.75em 1em;
+    font-size: 0.85em;
+    cursor: pointer;
+}
+
+.context-img {
+    margin: 0;
+    padding: 0;
+    height: 15px;
+    width: 16px;
+    transform: translate(0, 2px);
+}
+
+.context-link:hover {
+    background: #eeeeee;
+}
+
+.edit-task-button {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.hidden {
+    display: none;
+}
