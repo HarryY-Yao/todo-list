@@ -1,7 +1,6 @@
-import { taskList } from ".";
+import { taskList } from "./elements";
 
+// Removes every task from the task list (the data is untouched).
 export function clearTasks() {
-    while (taskList.firstChild) {
-        taskList.removeChild(taskList.firstChild);
-    } 
+  taskList.replaceChildren();
 }

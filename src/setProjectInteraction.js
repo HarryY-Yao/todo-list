@@ -1,92 +1,90 @@
 import { getCurrentProject } from "./getCurrentProject";
 import { setCurrentProject } from "./setCurrentProject";
-import { contextMenu, projectList, projectListDiv, projectHeader, deleteProject } from ".";
+import { contextMenu, projectHeader, deleteProject } from "./elements";
+import { projectList } from ".";
 import { clearTasks } from "./clearTasks";
 import { displayTasks } from "./displayTasks";
 import { updateMenuPosition } from "./updateMenuPosition";
 import { closeEditMenu } from "./editTask";
 import { saveState } from "./storage";
 
+// The sidebar element that was right-clicked (target of the delete action).
+let projectToDelete = null;
 
+function hideContextMenu() {
+  contextMenu.style.visibility = null;
+  projectToDelete = null;
+}
+
+// Any click anywhere dismisses the context menu.
+document.addEventListener("click", hideContextMenu);
+
+// "Delete" entry in the context menu.
+deleteProject.addEventListener("click", () => {
+  // Never delete the last remaining project.
+  if (projectList.length <= 1 || !projectToDelete) {
+    hideContextMenu();
+    return;
+  }
+
+  const index = projectList.findIndex((p) => p.id === projectToDelete.id);
+  const deletingCurrent = getCurrentProject().id === projectToDelete.id;
+
+  if (deletingCurrent) {
+    // Select a neighbour: the next project if we're deleting the first one,
+    // otherwise the previous one.
+    const neighbour = index === 0 ? projectList[1] : projectList[index - 1];
+    setCurrentProject(neighbour);
+    document
+      .getElementById(neighbour.id)
+      .classList.toggle("selected-project");
+    projectHeader.textContent = neighbour.title;
+  }
+
+  projectList.splice(index, 1);
+
+  if (deletingCurrent) {
+    clearTasks();
+    displayTasks(getCurrentProject());
+  }
+
+  projectToDelete.remove();
+  hideContextMenu();
+  saveState(projectList);
+});
+
+// Attaches click (select) and right-click (context menu) handlers to every
+// project in the sidebar. Call again after the sidebar is re-rendered.
 export function setProjectInteraction() {
-    const projectDivs = document.querySelectorAll(".project");
-    let projectToDelete = null; 
-    projectDivs.forEach(div => {
-        div.addEventListener("click", () => {
-            const currentProject = getCurrentProject();
-            const currentProjectDiv = document.getElementById(currentProject.id);
-            closeEditMenu();
-            for (const project of projectList) {
-                if (project.id == div.id) {
-                    currentProjectDiv.classList.toggle("selected-project");
-                    setCurrentProject(project);
-                    div.classList.toggle("selected-project");
-                    projectHeader.innerText = project.title;
-                    clearTasks()
-                    displayTasks(project);
-                    break
-                }
-            }
-            saveState(projectList);
-        })
+  const projectDivs = document.querySelectorAll(".project");
 
-        
-        div.addEventListener("contextmenu", (ev) => {
-            ev.preventDefault();
+  projectDivs.forEach((div) => {
+    // Left click: make this project the current one and show its tasks.
+    div.addEventListener("click", () => {
+      const currentProjectDiv = document.getElementById(
+        getCurrentProject().id,
+      );
+      closeEditMenu();
 
-            projectToDelete = div;
-            updateMenuPosition(ev.clientX, ev.clientY);
-            contextMenu.style.visibility = "visible";
-        });
-        
-    })
-    
-    document.addEventListener("click", () => {
-        projectToDelete = null;
-        contextMenu.style.visibility = null;
-    })
+      const project = projectList.find((p) => p.id === div.id);
+      if (project) {
+        currentProjectDiv.classList.toggle("selected-project");
+        setCurrentProject(project);
+        div.classList.toggle("selected-project");
+        projectHeader.textContent = project.title;
+        clearTasks();
+        displayTasks(project);
+      }
+      saveState(projectList);
+    });
 
-    deleteProject.addEventListener("click", () => {
-        if (projectList.length <= 1) {
-            contextMenu.visibility = null;
-            projectToDelete = null;
-            return;
-        }
-        
-        if (projectToDelete) {
-            let index = -1
-            for (let i = 0; i < projectList.length; i++) {
-                if (projectList[i].id == projectToDelete.id) {
-                    index = i;
-                }
-            }
+    // Right click: open the context menu at the cursor.
+    div.addEventListener("contextmenu", (ev) => {
+      ev.preventDefault();
 
-            if (getCurrentProject().id == projectToDelete.id) {
-                let newSelectedProject = null;
-                if (index == 0) {
-                    setCurrentProject(projectList[1]);
-                    newSelectedProject = document.querySelector(`#${projectList[1].id}`);
-                } else {
-                    setCurrentProject(projectList[index - 1]);
-                    newSelectedProject = document.querySelector(`#${projectList[index - 1].id}`);
-
-                }
-                projectList.splice(index, 1);
-                newSelectedProject.classList.toggle("selected-project");
-                projectHeader.innerText = getCurrentProject().title;
-                clearTasks();
-                displayTasks(getCurrentProject());
-            
-            } else {
-                projectList.splice(index, 1);
-            }
-
-            projectToDelete.remove();
-            projectToDelete = null;
-            contextMenu.visibility = null;
-            saveState(projectList);
-
-        }
-    }) 
-    
+      projectToDelete = div;
+      updateMenuPosition(ev.clientX, ev.clientY);
+      contextMenu.style.visibility = "visible";
+    });
+  });
 }

@@ -1,30 +1,34 @@
 import { addProject } from "./addProject";
-import { displayProjects } from "./displayProjects";
+import { displayProjects, searchInput } from "./displayProjects";
 import { clearProjects } from "./clearProjects";
-import { projectTitleInput, projectForm } from ".";
+import { projectTitleInput, projectForm } from "./elements";
 import { setProjectInteraction } from "./setProjectInteraction";
-import { searchInput } from "./displayProjects";
 
-const dialog = document.querySelector("#add-project")
-export const addProjectButton = document.querySelector("#new-project");
-export const projectSaveButton = document.querySelector("#add-proj-save");
-export const projectDiscardButton = document.querySelector("#project-discard");
+const dialog = document.querySelector("#add-project");
+const addProjectButton = document.querySelector("#new-project");
+const projectSaveButton = document.querySelector("#add-proj-save");
+const projectDiscardButton = document.querySelector("#project-discard");
 
 addProjectButton.addEventListener("click", () => {
-    dialog.showModal();
+  dialog.showModal();
 });
 
-projectSaveButton.addEventListener("click", () => {
-    addProject(projectTitleInput.value);
-    clearProjects();
-    displayProjects(searchInput.value.toLowerCase());
-    setProjectInteraction();
-    projectForm.reset();
-    dialog.close();
-    event.preventDefault();
+projectSaveButton.addEventListener("click", (e) => {
+  // Stop the form from submitting/reloading the page.
+  e.preventDefault();
+
+  addProject(projectTitleInput.value);
+
+  // Re-render the sidebar (respecting the current search filter).
+  clearProjects();
+  displayProjects(searchInput.value.toLowerCase());
+  setProjectInteraction();
+
+  projectForm.reset();
+  dialog.close();
 });
 
-projectDiscardButton.addEventListener("click", () => {
-    dialog.close();
-    event.preventDefault();
+projectDiscardButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  dialog.close();
 });

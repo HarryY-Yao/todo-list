@@ -1,78 +1,83 @@
-import { currentTask } from "./displayTasks";
-import { displayTasks } from "./displayTasks";
-import { currentProject } from ".";
+import {
+  currentTask,
+  clearCurrentTask,
+  displayTasks,
+} from "./displayTasks";
+import { getCurrentProject } from "./getCurrentProject";
 import { clearTasks } from "./clearTasks";
 import { projectList } from ".";
 import { saveState } from "./storage";
 
-export const editTaskClosebtn = document.querySelector("#close-edit");
-export const editTaskMenu = document.querySelector(".edit-task");
-export const editTaskName = document.querySelector("#edit-task-name");
-export const editTaskDesc = document.querySelector("#edit-task-desc");
-export const editTaskPriority = document.querySelector("#edit-task-priority");
-export const editTaskDate = document.querySelector("#task-edit-date");
-export const editSaveChanges = document.querySelector("#edit-save-btn");
-export const editDeleteTask = document.querySelector("#edit-delete-btn");
+// Edit-task side panel and its controls
+const editTaskClosebtn = document.querySelector("#close-edit");
+const editTaskMenu = document.querySelector(".edit-task");
+const editTaskName = document.querySelector("#edit-task-name");
+const editTaskDesc = document.querySelector("#edit-task-desc");
+const editTaskPriority = document.querySelector("#edit-task-priority");
+const editTaskDate = document.querySelector("#task-edit-date");
+const editSaveChanges = document.querySelector("#edit-save-btn");
+const editDeleteTask = document.querySelector("#edit-delete-btn");
 
+// Re-draws the task list for the current project and saves to storage.
+function refreshAndSave() {
+  clearTasks();
+  displayTasks(getCurrentProject());
+  saveState(projectList);
+}
 
 editTaskClosebtn.addEventListener("click", () => {
-    closeEditMenu();
+  closeEditMenu();
 });
 
 editSaveChanges.addEventListener("click", () => {
-    saveChanges(currentTask);
-    clearTasks();
-    displayTasks(currentProject);
-    saveState(projectList);
+  if (!currentTask) return;
+  saveChanges(currentTask);
+  refreshAndSave();
 });
 
 editDeleteTask.addEventListener("click", () => {
-    deleteTask(currentTask);
-    clearTasks();
-    displayTasks(currentProject);
-    saveState(projectList);
+  if (!currentTask) return;
+  deleteTask(currentTask);
+  refreshAndSave();
 });
 
+// Shows the edit panel pre-filled with the task's current values.
+// Name and description show as placeholders so leaving them blank keeps them.
 export function openEditMenu(task) {
-    editTaskName.setAttribute("placeholder", String(task.title));
-    editTaskDesc.setAttribute("placeholder", String(task.description));
-    editTaskDate.value = task.dueDate;
-    editTaskPriority.value = task.priority;
+  editTaskName.setAttribute("placeholder", String(task.title));
+  editTaskDesc.setAttribute("placeholder", String(task.description));
+  editTaskDate.value = task.dueDate;
+  editTaskPriority.value = task.priority;
 
-    editTaskMenu.classList.remove("hidden");
+  editTaskMenu.classList.remove("hidden");
 }
 
 export function closeEditMenu() {
-    editTaskMenu.classList.add("hidden");
+  editTaskMenu.classList.add("hidden");
 }
 
+// Applies the panel's values to `task`. Blank name/description are ignored.
 export function saveChanges(task) {
-    const newTaskName = editTaskName.value;
-    const newTaskDesc = editTaskDesc.value;
-    const newTaskPriority = editTaskPriority.value;
-    const newTaskDate = editTaskDate.value;
+  if (editTaskName.value !== "") {
+    task.title = editTaskName.value;
+    editTaskName.value = "";
+  }
 
-    if (newTaskName != "") {
-        task.title = newTaskName;
-        editTaskName = "";
-    }
+  if (editTaskDesc.value !== "") {
+    task.description = editTaskDesc.value;
+    editTaskDesc.value = "";
+  }
 
-    if (newTaskDesc != "") {
-        task.description = newTaskDesc;
-        editTaskDesc.value = "";
-    }
+  task.priority = editTaskPriority.value;
+  task.dueDate = editTaskDate.value;
 
-    task.priority = newTaskPriority;
-    task.dueDate = newTaskDate;
-
-    closeEditMenu();
+  closeEditMenu();
 }
 
-export function deleteTask(currTask) {
-    const newTasks = currentProject.tasks.filter(task => task != currTask);
-    currentProject.tasks = newTasks;
-    closeEditMenu();
+// Removes `task` from the current project and closes the edit panel.
+export function deleteTask(task) {
+  const project = getCurrentProject();
+  project.tasks = project.tasks.filter((t) => t.id !== task.id);
+  clearCurrentTask();
+  closeEditMenu();
 }
-
-
-

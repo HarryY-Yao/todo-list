@@ -1,7 +1,6 @@
-import { projectListDiv } from ".";
+import { projectListDiv } from "./elements";
 
+// Removes every project from the sidebar (the data is untouched).
 export function clearProjects() {
-    while (projectListDiv.firstChild) {
-        projectListDiv.removeChild(projectListDiv.firstChild);
-    }
+  projectListDiv.replaceChildren();
 }

@@ -1,9 +1,6 @@
 import { projectList } from ".";
 
+// Returns the project flagged as currently selected (undefined if none).
 export function getCurrentProject() {
-    for (const project of projectList) {
-        if (project.isCurrentProject) {
-            return project;
-        }
-    }
+  return projectList.find((project) => project.isCurrentProject);
 }

@@ -1,19 +1,18 @@
+// A named collection of tasks. Exactly one project is "current" at a time.
 export class Project {
-    constructor(title = "Untitled Project") {
-        this.title = title;
-        this.tasks = [];
-        this.id = "g" + `${crypto.randomUUID()}`;
-        this.isCurrentProject = false;
-    }
+  constructor(title = "Untitled Project") {
+    this.title = title;
+    this.tasks = [];
+    this.id = "g" + crypto.randomUUID();
+    this.isCurrentProject = false;
+  }
 
-    setID(id) {
-        this.id = id;
-    }
+  // Used when restoring a project from storage so its id stays stable.
+  setID(id) {
+    this.id = id;
+  }
 
-    toggleCurrentProject() {
-        this.isCurrentProject = !(this.isCurrentProject);
-    }
-
-
-
+  toggleCurrentProject() {
+    this.isCurrentProject = !this.isCurrentProject;
+  }
 }

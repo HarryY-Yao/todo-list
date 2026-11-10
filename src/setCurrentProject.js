@@ -1,8 +1,7 @@
 import { getCurrentProject } from "./getCurrentProject";
 
-
+// Switches the selected project: un-flags the old one, flags the new one.
 export function setCurrentProject(project) {
-    let currProj = getCurrentProject();
-    currProj.toggleCurrentProject();
-    project.toggleCurrentProject();
+  getCurrentProject().toggleCurrentProject();
+  project.toggleCurrentProject();
 }

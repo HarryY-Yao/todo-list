@@ -1,52 +1,55 @@
-import { projectList, projectListDiv } from ".";
-import todoListIcon from "../images/todo-list-svgrepo-com.svg"
+import { projectListDiv } from "./elements";
+import { projectList } from ".";
+import todoListIcon from "../images/todo-list-svgrepo-com.svg";
 import { clearProjects } from "./clearProjects";
 import { setProjectInteraction } from "./setProjectInteraction";
-import { currentProject } from ".";
 import { getCurrentProject } from "./getCurrentProject";
 
+// Search box above the project list: filters projects as you type.
 export const searchInput = document.getElementById("search");
+
 searchInput.addEventListener("input", (e) => {
-    const query = e.target.value.toLowerCase();
-    clearProjects();
-    displayProjects(query)
-    setProjectInteraction();
+  const query = e.target.value.toLowerCase();
+  clearProjects();
+  displayProjects(query);
+  setProjectInteraction();
 });
 
+// Small helper: create an element with a class and optional text.
+function createEl(tag, className, text) {
+  const el = document.createElement(tag);
+  el.classList.add(className);
+  if (text !== undefined) el.textContent = text;
+  return el;
+}
+
+// Renders the sidebar projects whose title contains `query` (lowercase).
+// The current project is always shown, even if it doesn't match the search.
 export function displayProjects(query) {
-    const filteredProjects = projectList.filter(project =>
-        project.title.toLowerCase().includes(query)
-    );
+  const filteredProjects = projectList.filter((project) =>
+    project.title.toLowerCase().includes(query),
+  );
 
-    if (!filteredProjects.includes(getCurrentProject())) {
-        filteredProjects.push(getCurrentProject());
-    }
-    
-    for (const project of filteredProjects) {
-        let projectDiv = document.createElement("div")
-        projectDiv.classList.add("project");
-        projectDiv.setAttribute("id", project.id);
+  const current = getCurrentProject();
+  if (!filteredProjects.includes(current)) {
+    filteredProjects.push(current);
+  }
 
-        if (project.isCurrentProject) {
-            projectDiv.classList.add("selected-project");
-        }
-
-        let iconDiv = document.createElement("div");
-        iconDiv.classList.add("prj-img");
-
-        let icon = document.createElement("img");
-        icon.classList.add("prj-img");
-        icon.src = todoListIcon;
-
-        let titleDiv = document.createElement("div");
-        titleDiv.classList.add("prj-ttl");
-        titleDiv.innerText = project.title;
-
-        iconDiv.appendChild(icon);
-        projectDiv.appendChild(iconDiv);
-        projectDiv.appendChild(titleDiv);
-        projectListDiv.appendChild(projectDiv);
+  for (const project of filteredProjects) {
+    const projectDiv = createEl("div", "project");
+    projectDiv.id = project.id;
+    if (project.isCurrentProject) {
+      projectDiv.classList.add("selected-project");
     }
 
-    
+    const iconDiv = createEl("div", "prj-img");
+    const icon = createEl("img", "prj-img");
+    icon.src = todoListIcon;
+    iconDiv.appendChild(icon);
+
+    const titleDiv = createEl("div", "prj-ttl", project.title);
+
+    projectDiv.append(iconDiv, titleDiv);
+    projectListDiv.appendChild(projectDiv);
+  }
 }
