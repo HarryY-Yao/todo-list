@@ -3,6 +3,8 @@ import calendarSVG from "../images/calendar.svg";
 import { openEditMenu } from "./editTask";
 import { projectList } from ".";
 import { saveState } from "./storage";
+import { getCurrentProject } from "./getCurrentProject";
+import { clearTasks } from "./clearTasks";
 
 // The task whose edit menu is currently open (null if none).
 // Exported as a live binding so editTask.js always sees the latest value.
@@ -49,12 +51,17 @@ function createTaskElement(task) {
     taskTitle.classList.add("completed");
   }
 
-  // Toggle completion, update the row, and persist the change.
+  // Toggle completion and persist. A task that becomes completed sinks to
+  // the bottom of the list; un-checking leaves it where it is.
   checkbox.addEventListener("click", () => {
     task.completeTask();
-    setChecked(checkbox, task.isCompleted());
-    taskTitle.classList.toggle("completed", task.isCompleted());
+    if (task.isCompleted()) {
+      const project = getCurrentProject();
+      project.tasks = project.tasks.filter((t) => t.id !== task.id);
+      project.tasks.push(task);
+    }
     saveState(projectList);
+    refreshTasks();
   });
 
   taskStart.append(checkbox, taskTitle);
@@ -90,7 +97,86 @@ function createTaskElement(task) {
   taskEnd.appendChild(showMore);
 
   taskDiv.append(taskStart, dueDateDiv, priorityDiv, taskEnd);
+
+  // Drag-and-drop reordering
+  taskDiv.draggable = true;
+  taskDiv.dataset.taskId = task.id;
+  taskDiv.addEventListener("dragstart", (e) => {
+    draggedTaskId = task.id;
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", task.id); // required by Firefox
+    // Defer so the browser snapshots the row before it gets dimmed.
+    requestAnimationFrame(() => taskDiv.classList.add("dragging"));
+  });
+  taskDiv.addEventListener("dragend", () => {
+    draggedTaskId = null;
+    clearDropIndicators();
+    taskDiv.classList.remove("dragging");
+  });
+
   return taskDiv;
+}
+
+// ---- Drag-and-drop reordering ----------------------------------------
+
+// Id of the task currently being dragged (null when not dragging).
+let draggedTaskId = null;
+
+function clearDropIndicators() {
+  taskList
+    .querySelectorAll(".drop-before, .drop-after")
+    .forEach((el) => el.classList.remove("drop-before", "drop-after"));
+}
+
+// True if the pointer is in the top half of the row.
+function isUpperHalf(e, row) {
+  const rect = row.getBoundingClientRect();
+  return e.clientY < rect.top + rect.height / 2;
+}
+
+// These listeners go on the list itself (once), so they cover every row,
+// including rows created later.
+taskList.addEventListener("dragover", (e) => {
+  const row = e.target.closest(".task");
+  if (draggedTaskId === null || !row) return;
+
+  e.preventDefault(); // allow dropping here
+  clearDropIndicators();
+  if (row.dataset.taskId !== draggedTaskId) {
+    row.classList.add(isUpperHalf(e, row) ? "drop-before" : "drop-after");
+  }
+});
+
+taskList.addEventListener("drop", (e) => {
+  const row = e.target.closest(".task");
+  if (draggedTaskId === null || !row) return;
+  e.preventDefault();
+
+  const targetId = row.dataset.taskId;
+  const placeBefore = isUpperHalf(e, row);
+  const movedId = draggedTaskId;
+  draggedTaskId = null;
+  if (targetId === movedId) {
+    clearDropIndicators();
+    return;
+  }
+
+  // Take the dragged task out, then insert it next to the target.
+  const project = getCurrentProject();
+  const moved = project.tasks.find((t) => t.id === movedId);
+  const rest = project.tasks.filter((t) => t.id !== movedId);
+  const targetIndex = rest.findIndex((t) => t.id === targetId);
+  rest.splice(placeBefore ? targetIndex : targetIndex + 1, 0, moved);
+  project.tasks = rest;
+
+  saveState(projectList);
+  refreshTasks();
+});
+
+// Re-draws the current project's task list from its data.
+function refreshTasks() {
+  clearTasks();
+  displayTasks(getCurrentProject());
 }
 
 // Renders all tasks of `project` into the task list.

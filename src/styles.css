@@ -354,3 +354,19 @@ input[type=search] {
 .hidden {
     display: none;
 }
+/* Drag-and-drop reordering of tasks */
+.task[draggable="true"] {
+    cursor: grab;
+}
+
+.task.dragging {
+    opacity: 0.4;
+}
+
+.task.drop-before {
+    box-shadow: 0 -2px 0 0 #4a7cf7;
+}
+
+.task.drop-after {
+    box-shadow: 0 2px 0 0 #4a7cf7;
+}
